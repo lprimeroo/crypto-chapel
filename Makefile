@@ -5,7 +5,7 @@ SUPPORT = CryptoSupport
 
 
 Crypto: Crypto.chpl
-	$(CHPL) $(CFLAGS) -o Crypto Crypto.chpl CryptoSupport/hashSupport.chpl CryptoSupport/CryptoUtils.chpl --main-module=Crypto
+	$(CHPL) $(CFLAGS) -o Crypto Crypto.chpl CryptoSupport/hashSupport.chpl CryptoSupport/CryptoUtils.chpl CryptoSupport/aesSupport.chpl --main-module=Crypto
 
 CryptoUtils: $(SUPPORT)/CryptoUtils.chpl
 	$(CHPL) $(CFLAGS) -o $(SUPPORT)/CryptoUtils $(SUPPORT)/CryptoUtils.chpl

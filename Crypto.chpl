@@ -2,16 +2,19 @@ require "openssl/evp.h", "-lcrypto";
 require "openssl/aes.h", "openssl/rand.h";
 
 require "CryptoSupport/hashSupport.chpl";
+require "CryptoSupport/aesSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 
 module Crypto {
 
+  use aesSupport;
+  use aesSupport;
   use hashSupport;
   use hashSupport;
   use CryptoUtils;
   use CryptoUtils;
 
-
+  /* Hashing Functions */
   class Hash {
     var hashLen: int;
     var digestName: string;
@@ -44,6 +47,54 @@ module Crypto {
       this.hashSpace = hashSupport.digestPrimitives(this.digestName, this.hashLen, inputBuffer);
       var hashBuffer = new CryptoBuffer(this.hashSpace);
       return hashBuffer;
+    }
+  }
+
+
+  /* AES Symmetric cipher */
+  class AES {
+    var cipher: EVP_CIPHER_PTR;
+    var bitLen: int;
+
+    proc AES(bits: int, mode: string) {
+      if (bits == 128 && mode == "cbc") {
+        this.cipher = EVP_aes_128_cbc();
+      } else if (bits == 192 && mode == "cbc") {
+        this.cipher = EVP_aes_192_cbc();
+      } else if (bits == 256 && mode == "cbc") {
+        this.cipher = EVP_aes_256_cbc();
+      } else {
+        halt("The desired variant of AES does not exist.");
+      }
+      this.bitLen = bits/8;
+    }
+
+    /* Generates the key using password-based KDF */
+    proc generateKey(userKey: string, salt: CryptoBuffer) {
+      var key = aesSupport.getPBKDFKey(userKey, this.bitLen, salt);
+      var keyBuff = new CryptoBuffer(key);
+      return keyBuff;
+    }
+
+    /* Generates an initialization vector using a CSPRNG */
+    proc generateIV() {
+      var IV = aesSupport.getIV(this.bitLen);
+      var IVBuff = new CryptoBuffer(IV);
+      return IVBuff;
+    }
+
+    /* AES encryption routine */
+    proc encrypt(plaintext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer) {
+      var encryptedPlaintext = aesSupport.aesEncrypt(plaintext, key, IV, this.cipher);
+      var encryptedPlaintextBuff = new CryptoBuffer(encryptedPlaintext);
+      return encryptedPlaintextBuff;
+    }
+
+    /* AES decryption routine */
+    proc decrypt(ciphertext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer) {
+      var decryptedCiphertext = aesSupport.aesDecrypt(ciphertext, key, IV, this.cipher);
+      var decryptedCiphertextBuff = new CryptoBuffer(decryptedCiphertext);
+      return decryptedCiphertextBuff;
     }
   }
 
