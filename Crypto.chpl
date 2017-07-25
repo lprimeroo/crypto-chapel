@@ -69,11 +69,9 @@ module Crypto {
       this.bitLen = bits/8;
     }
 
-    /* Generates the key using password-based KDF */
-    proc generateKey(userKey: string, salt: CryptoBuffer) {
-      var key = aesSupport.getPBKDFKey(userKey, this.bitLen, salt);
-      var keyBuff = new CryptoBuffer(key);
-      return keyBuff;
+    /* Returns the number of bytes required by the cipher */
+    proc getByteSize() {
+        return this.bitLen;
     }
 
     /* Generates an initialization vector using a CSPRNG */
