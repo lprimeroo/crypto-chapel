@@ -4,7 +4,7 @@ require "openssl/aes.h", "openssl/rand.h";
 require "CryptoSupport/hashSupport.chpl";
 require "CryptoSupport/aesSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/randomSupport.chpl";
+require "CryptoSupport/cryptoRandomSupport.chpl";
 
 module Crypto {
 
@@ -14,8 +14,8 @@ module Crypto {
   use hashSupport;
   use CryptoUtils;
   use CryptoUtils;
-  use randomSupport;
-  use randomSupport;
+  use cryptoRandomSupport;
+  use cryptoRandomSupport;
 
   /* Hashing Functions */
   class Hash {
@@ -99,9 +99,9 @@ module Crypto {
     }
   }
 
-  class Random {
-    proc randomize(buffLen: int) {
-      var randomizedBuff = randomSupport.randomize(buffLen);
+  class CryptoRandom {
+    proc createRandomBuffer(buffLen: int) {
+      var randomizedBuff = cryptoRandomSupport.createRandomBuffer(buffLen);
       var randomizedCryptoBuff = new CryptoBuffer(randomizedBuff);
       return randomizedCryptoBuff;
     }
