@@ -9,12 +9,6 @@ module aesSupport {
   use symmetricPrimitives;
   use symmetricPrimitives;
 
-  proc getIV(bitLen: int) {
-    var iv: [0..(bitLen-1)] uint(8);
-    symmetricPrimitives.RAND_bytes(c_ptrTo(iv): c_ptr(c_uchar), bitLen: c_int);
-    return iv;
-  }
-
   proc aesEncrypt(plaintext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer, cipher: symmetricPrimitives.EVP_CIPHER_PTR) {
 
     /* Initialize the context */
