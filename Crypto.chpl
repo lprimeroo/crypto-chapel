@@ -77,13 +77,6 @@ module Crypto {
         return this.bitLen;
     }
 
-    /* Generates an initialization vector using a CSPRNG */
-    proc generateIV() {
-      var IV = aesSupport.getIV(this.bitLen);
-      var IVBuff = new CryptoBuffer(IV);
-      return IVBuff;
-    }
-
     /* AES encryption routine */
     proc encrypt(plaintext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer) {
       var encryptedPlaintext = aesSupport.aesEncrypt(plaintext, key, IV, this.cipher);

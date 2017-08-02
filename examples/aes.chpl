@@ -14,7 +14,7 @@ proc main(){
   var k = KDF.PBKDF2_HMAC("random_key", salt, a.getByteSize(), 1000, hash);
   writeln("Generated Key: ", k.toHex());
 
-  var iv = a.generateIV();
+  var iv = (new CryptoRandom()).createRandomBuffer(32); // or use a.getByteSize() as the argument
   writeln("Generated IV: ", iv.toHex());
 
   /* Message to be encrypted */
