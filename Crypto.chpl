@@ -3,11 +3,14 @@ require "openssl/aes.h", "openssl/rand.h";
 
 require "CryptoSupport/hashSupport.chpl";
 require "CryptoSupport/aesSupport.chpl";
+require "CryptoSupport/kdfSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/cryptoRandomSupport.chpl";
 
 module Crypto {
 
+  use kdfSupport;
+  use kdfSupport;
   use aesSupport;
   use aesSupport;
   use hashSupport;
@@ -97,6 +100,24 @@ module Crypto {
       var randomizedBuff = cryptoRandomSupport.createRandomBuffer(buffLen);
       var randomizedCryptoBuff = new CryptoBuffer(randomizedBuff);
       return randomizedCryptoBuff;
+    }
+  }
+
+  class KDF {
+    var bitLen: int;
+    var iterCount: int;
+    var hashName: string;
+
+    proc KDF(bitLen: int, iterCount: int, digest: Hash) {
+      this.bitLen = bitLen;
+      this.iterCount = iterCount;
+      this.hashName = digest.getDigestName();
+    }
+
+    proc PBKDF2_HMAC(userKey: string, saltBuff: CryptoBuffer) {
+      var key = kdfSupport.PBKDF2_HMAC(userKey, saltBuff, this.bitLen, this.iterCount, this.hashName);
+      var keyBuff = new CryptoBuffer(key);
+      return keyBuff;
     }
   }
 }
