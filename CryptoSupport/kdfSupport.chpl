@@ -1,19 +1,16 @@
 require "openssl/evp.h";
-require "Crypto.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/primitives/utilPrimitives.chpl";
 
-module KDF {
+module kdfSupport {
 
   use CryptoUtils;
   use CryptoUtils;
-  use Crypto;
-  use Crypto;
   use utilPrimitives;
   use utilPrimitives;
 
   /* Routine for PBKDF2 mechanism */
-  proc PBKDF2_HMAC(userKey: string, saltBuff: CryptoBuffer, bitLen: int, iterCount: int, digest: Hash) {
+  proc PBKDF2_HMAC(userKey: string, saltBuff: CryptoBuffer, bitLen: int, iterCount: int, digestName: string) {
 
     /* Loads all digests into the table*/
     utilPrimitives.OpenSSL_add_all_digests();
@@ -21,7 +18,6 @@ module KDF {
     var key: [0..(bitLen-1)] uint(8);
     var salt = saltBuff.getBuffData();
     var userKeyLen = userKey.length;
-    var digestName = digest.getDigestName();
 
     /* Use the specified digest */
     const md = utilPrimitives.EVP_get_digestbyname(digestName.c_str());
@@ -35,8 +31,7 @@ module KDF {
                       bitLen: c_int,
                       c_ptrTo(key): c_ptr(c_uchar));
 
-    var keyBuff = new CryptoBuffer(key);
-    return keyBuff;
+    return key;
   }
 
 }
