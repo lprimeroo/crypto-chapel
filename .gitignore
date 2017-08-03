@@ -4,3 +4,4 @@ Crypto
 CryptoUtils
 hashSupport
 aesSupport
+rsaSupport

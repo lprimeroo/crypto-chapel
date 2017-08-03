@@ -120,4 +120,50 @@ module Crypto {
       return keyBuff;
     }
   }
+
+  class RSA {
+
+    var keySize: int;
+    var keyObj:
+
+    proc RSA(keySize) {
+      this.keySize = keySize;
+    }
+
+    /*proc exportPublicKey(fileType: string) {
+
+    }
+
+    proc importPublicKey() {
+
+    }
+
+    proc exportPrivateKey(fileType: string) {
+
+    }
+
+    proc importPrivateKey() {
+
+    }
+
+    proc getPublicKey() {
+
+    }
+
+    proc getPrivateKey() {
+
+    }*/
+
+    proc encrypt(plaintext: CryptoBuffer) {
+      var ciphertext = rsaSupport.rsaEncrypt(plaintext);
+      var ciphertextBuff = new CryptoBuffer(ciphertext);
+      return ciphertextBuff;
+    }
+
+    proc decrypt(ciphertext: CryptoBuffer) {
+      var plaintext = rsaSupport.rsaDecrypt(ciphertext);
+      var plaintextBuff = new CryptoBuffer(plaintext);
+      return plaintextBuff;
+    }
+  }
 }
