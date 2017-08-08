@@ -52,4 +52,27 @@ module CryptoUtils {
     }
   }
 
+  class Envelope {
+    var key: CryptoBuffer;
+    var iv: CryptoBuffer;
+    var value: CryptoBuffer;
+
+    proc Envelope(iv: CryptoBuffer, encSymmKey: CryptoBuffer, encSymmValue: CryptoBuffer) {
+      this.key = encSymmKey;
+      this.iv = iv;
+      this.value = encSymmValue;
+    }
+
+    proc getEncKey() {
+      return this.key;
+    }
+
+    proc getEncMessage() {
+      return this.value;
+    }
+
+    proc getIV() {
+      return this.iv;
+    }
+  }
 }

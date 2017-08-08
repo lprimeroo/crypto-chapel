@@ -6,6 +6,7 @@ require "CryptoSupport/aesSupport.chpl";
 require "CryptoSupport/kdfSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/cryptoRandomSupport.chpl";
+require "CryptoSupport/rsaSupport.chpl";
 
 module Crypto {
 
@@ -19,6 +20,12 @@ module Crypto {
   use CryptoUtils;
   use cryptoRandomSupport;
   use cryptoRandomSupport;
+  use rsaSupport;
+  use rsaSupport;
+  use symmetricPrimitives;
+  use symmetricPrimitives;
+  use asymmetricPrimitives;
+  use asymmetricPrimitives;
 
   /* Hashing Functions */
   class Hash {
@@ -59,16 +66,16 @@ module Crypto {
 
   /* AES Symmetric cipher */
   class AES {
-    var cipher: EVP_CIPHER_PTR;
+    var cipher: symmetricPrimitives.EVP_CIPHER_PTR;
     var bitLen: int;
 
     proc AES(bits: int, mode: string) {
       if (bits == 128 && mode == "cbc") {
-        this.cipher = EVP_aes_128_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_128_cbc();
       } else if (bits == 192 && mode == "cbc") {
-        this.cipher = EVP_aes_192_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_192_cbc();
       } else if (bits == 256 && mode == "cbc") {
-        this.cipher = EVP_aes_256_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_256_cbc();
       } else {
         halt("The desired variant of AES does not exist.");
       }
@@ -124,44 +131,40 @@ module Crypto {
   class RSA {
 
     var keySize: int;
-    var keyObj:
+    var keyObjSize: int;
+    var keyObj: asymmetricPrimitives.EVP_PKEY_PTR;
+    var ivLen: int;
 
     proc RSA(keySize) {
       this.keySize = keySize;
+      this.keyObj = rsaSupport.rsaInit(this.keySize);
+      this.ivLen = asymmetricPrimitives.EVP_CIPHER_iv_length(asymmetricPrimitives.EVP_aes_256_cbc());
+      this.keyObjSize = asymmetricPrimitives.EVP_PKEY_size(this.keyObj);
     }
-
-    /*proc exportPublicKey(fileType: string) {
-
-    }
-
-    proc importPublicKey() {
-
-    }
-
-    proc exportPrivateKey(fileType: string) {
-
-    }
-
-    proc importPrivateKey() {
-
-    }
-
-    proc getPublicKey() {
-
-    }
-
-    proc getPrivateKey() {
-
-    }*/
 
     proc encrypt(plaintext: CryptoBuffer) {
-      var ciphertext = rsaSupport.rsaEncrypt(plaintext);
+      var iv: [0..(this.ivLen - 1)] uint(8);
+      var encSymmKey: [0..(this.keyObjSize - 1)] uint(8);
+      var ciphertextDomain: domain(1) = {0..(plaintext.getBuffSize() + 16)};
+      var ciphertext: [ciphertextDomain] uint(8);
+
+      rsaSupport.rsaEncrypt(this.keyObj, plaintext, iv, encSymmKey, ciphertext, ciphertextDomain);
+
+      var ivBuff = new CryptoBuffer(iv);
+      var keyBuff = new CryptoBuffer(encSymmKey);
       var ciphertextBuff = new CryptoBuffer(ciphertext);
-      return ciphertextBuff;
+
+      var ciphertextEnvp = new Envelope(ivBuff, keyBuff, ciphertextBuff);
+      return ciphertextEnvp;
     }
 
-    proc decrypt(ciphertext: CryptoBuffer) {
-      var plaintext = rsaSupport.rsaDecrypt(ciphertext);
+    proc decrypt(envelope: Envelope) {
+
+      var encKey = envelope.getEncKey();
+      var ciphertext = envelope.getEncMessage();
+      var iv = envelope.getIV();
+
+      var plaintext = rsaSupport.rsaDecrypt(this.keyObj, iv, encKey, ciphertext);
       var plaintextBuff = new CryptoBuffer(plaintext);
       return plaintextBuff;
     }
