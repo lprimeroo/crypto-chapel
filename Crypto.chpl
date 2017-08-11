@@ -6,6 +6,7 @@ require "CryptoSupport/aesSupport.chpl";
 require "CryptoSupport/kdfSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/cryptoRandomSupport.chpl";
+require "CryptoSupport/rsaKeySupport.chpl";
 
 module Crypto {
 
@@ -19,6 +20,12 @@ module Crypto {
   use CryptoUtils;
   use cryptoRandomSupport;
   use cryptoRandomSupport;
+  use symmetricPrimitives;
+  use symmetricPrimitives;
+  use asymmetricPrimitives;
+  use asymmetricPrimitives;
+  use rsaKeySupport;
+  use rsaKeySupport;
 
   /* Hashing Functions */
   class Hash {
@@ -59,16 +66,16 @@ module Crypto {
 
   /* AES Symmetric cipher */
   class AES {
-    var cipher: EVP_CIPHER_PTR;
+    var cipher: symmetricPrimitives.EVP_CIPHER_PTR;
     var bitLen: int;
 
     proc AES(bits: int, mode: string) {
       if (bits == 128 && mode == "cbc") {
-        this.cipher = EVP_aes_128_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_128_cbc();
       } else if (bits == 192 && mode == "cbc") {
-        this.cipher = EVP_aes_192_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_192_cbc();
       } else if (bits == 256 && mode == "cbc") {
-        this.cipher = EVP_aes_256_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_256_cbc();
       } else {
         halt("The desired variant of AES does not exist.");
       }
@@ -119,5 +126,23 @@ module Crypto {
       var keyBuff = new CryptoBuffer(key);
       return keyBuff;
     }
+  }
+
+  class RSAKey {
+    var keyLen: int;
+    var keyObj: asymmetricPrimitives.EVP_PKEY_PTR;
+
+    proc RSAKey(keyLen: int) {
+      if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
+        halt("RSAKey: Invalid key length.");
+      }
+      this.keyLen = keyLen;
+    }
+
+    proc generate() {
+      this.keyObj = rsaKeySupport.generateKeys(this.keyLen);
+    }
+
+    /* TODO: Key access functions to be added */
   }
 }
