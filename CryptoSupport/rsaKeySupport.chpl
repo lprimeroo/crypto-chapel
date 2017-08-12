@@ -12,11 +12,13 @@ module rsaKeySupport {
 
   proc generateKeys(bits: int) {
    var localKeyPair: asymmetricPrimitives.EVP_PKEY_PTR;
-   var keyCtx = asymmetricPrimitives.EVP_PKEY_CTX_new_id(6: c_int, c_nil: asymmetricPrimitives.ENGINE_PTR);
-
+   var keyCtx = asymmetricPrimitives.EVP_PKEY_CTX_new_id(asymmetricPrimitives.EVP_PKEY_RSA: c_int,
+                                                         c_nil: asymmetricPrimitives.ENGINE_PTR);
    asymmetricPrimitives.EVP_PKEY_keygen_init(keyCtx);
    asymmetricPrimitives.EVP_PKEY_CTX_set_rsa_keygen_bits(keyCtx, bits: c_int);
    asymmetricPrimitives.EVP_PKEY_keygen(keyCtx, localKeyPair);
+
+   asymmetricPrimitives.EVP_PKEY_CTX_free(keyCtx);
    return localKeyPair;
   }
 }

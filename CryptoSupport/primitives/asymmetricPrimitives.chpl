@@ -5,6 +5,7 @@ module asymmetricPrimitives {
   extern type EVP_CIPHER_CTX;
   extern type EVP_PKEY;
   extern type EVP_CIPHER;
+  extern var EVP_PKEY_RSA: c_int;
 
   extern type ENGINE_PTR = c_ptr(ENGINE);
   extern type EVP_PKEY_CTX_PTR = c_ptr(EVP_PKEY_CTX);
@@ -21,6 +22,7 @@ module asymmetricPrimitives {
   extern proc EVP_PKEY_keygen_init(ctx: EVP_PKEY_CTX_PTR): c_int;
   extern proc EVP_PKEY_CTX_set_rsa_keygen_bits(ctx: EVP_PKEY_CTX_PTR, mbits: c_int): c_int;
   extern proc EVP_PKEY_keygen(ctx: EVP_PKEY_CTX_PTR, ref ppkey: EVP_PKEY_PTR): c_int;
+  extern proc EVP_PKEY_CTX_free(ctx: EVP_PKEY_CTX_PTR);
 
   extern proc EVP_SealInit(ref ctx: EVP_CIPHER_CTX, const types: EVP_CIPHER_PTR,
                            ref ek: c_ptr(c_uchar), ekl: c_ptr(c_int),

@@ -6,7 +6,7 @@ require "CryptoSupport/aesSupport.chpl";
 require "CryptoSupport/kdfSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/cryptoRandomSupport.chpl";
-require "CryptoSupport/rsaKeySupport.chpl";
+
 
 module Crypto {
 
@@ -24,8 +24,6 @@ module Crypto {
   use symmetricPrimitives;
   use asymmetricPrimitives;
   use asymmetricPrimitives;
-  use rsaKeySupport;
-  use rsaKeySupport;
 
   /* Hashing Functions */
   class Hash {
@@ -126,23 +124,5 @@ module Crypto {
       var keyBuff = new CryptoBuffer(key);
       return keyBuff;
     }
-  }
-
-  class RSAKey {
-    var keyLen: int;
-    var keyObj: asymmetricPrimitives.EVP_PKEY_PTR;
-
-    proc RSAKey(keyLen: int) {
-      if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
-        halt("RSAKey: Invalid key length.");
-      }
-      this.keyLen = keyLen;
-    }
-
-    proc generate() {
-      this.keyObj = rsaKeySupport.generateKeys(this.keyLen);
-    }
-
-    /* TODO: Key access functions to be added */
   }
 }
