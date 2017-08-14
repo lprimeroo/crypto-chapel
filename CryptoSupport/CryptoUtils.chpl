@@ -1,4 +1,9 @@
+require "CryptoSupport/rsaKeySupport.chpl";
+
 module CryptoUtils {
+
+  use rsaKeySupport;
+  use rsaKeySupport;
 
   class CryptoBuffer {
     var _len: int = 0;
@@ -52,4 +57,18 @@ module CryptoUtils {
     }
   }
 
+  class RSAKey {
+    var keyLen: int;
+    var keyObj: asymmetricPrimitives.EVP_PKEY_PTR;
+
+    proc RSAKey(keyLen: int) {
+      if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
+        halt("RSAKey: Invalid key length.");
+      }
+      this.keyLen = keyLen;
+      this.keyObj = rsaKeySupport.generateKeys(this.keyLen);
+    }
+
+    /* TODO: Key access functions to be added */
+  }
 }

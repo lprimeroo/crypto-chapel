@@ -7,6 +7,7 @@ require "CryptoSupport/kdfSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/cryptoRandomSupport.chpl";
 
+
 module Crypto {
 
   use kdfSupport;
@@ -19,6 +20,10 @@ module Crypto {
   use CryptoUtils;
   use cryptoRandomSupport;
   use cryptoRandomSupport;
+  use symmetricPrimitives;
+  use symmetricPrimitives;
+  use asymmetricPrimitives;
+  use asymmetricPrimitives;
 
   /* Hashing Functions */
   class Hash {
@@ -59,16 +64,16 @@ module Crypto {
 
   /* AES Symmetric cipher */
   class AES {
-    var cipher: EVP_CIPHER_PTR;
+    var cipher: symmetricPrimitives.EVP_CIPHER_PTR;
     var bitLen: int;
 
     proc AES(bits: int, mode: string) {
       if (bits == 128 && mode == "cbc") {
-        this.cipher = EVP_aes_128_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_128_cbc();
       } else if (bits == 192 && mode == "cbc") {
-        this.cipher = EVP_aes_192_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_192_cbc();
       } else if (bits == 256 && mode == "cbc") {
-        this.cipher = EVP_aes_256_cbc();
+        this.cipher = symmetricPrimitives.EVP_aes_256_cbc();
       } else {
         halt("The desired variant of AES does not exist.");
       }
