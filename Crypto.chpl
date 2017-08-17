@@ -6,7 +6,7 @@ require "CryptoSupport/aesSupport.chpl";
 require "CryptoSupport/kdfSupport.chpl";
 require "CryptoSupport/CryptoUtils.chpl";
 require "CryptoSupport/cryptoRandomSupport.chpl";
-
+require "CryptoSupport/rsaSupport.chpl";
 
 module Crypto {
 
@@ -24,6 +24,8 @@ module Crypto {
   use symmetricPrimitives;
   use asymmetricPrimitives;
   use asymmetricPrimitives;
+  use rsaSupport;
+  use rsaSupport;
 
   /* Hashing Functions */
   class Hash {
@@ -125,4 +127,27 @@ module Crypto {
       return keyBuff;
     }
   }
+
+  class RSA {
+    proc RSA() {}
+
+    proc encrypt(plaintext: CryptoBuffer, keys: [] RSAKey) {
+      var ivLen = asymmetricPrimitives.EVP_CIPHER_iv_length(asymmetricPrimitives.EVP_aes_256_cbc());
+      var iv: [0..(ivLen - 1)] uint(8);
+
+      var encSymmKeys: [0..(keys.size - 1)] CryptoBuffer;
+
+      var ciphertext = rsaSupport.rsaEncrypt(keys, plaintext, iv, encSymmKeys);
+      writeln(encSymmKeys[0].toHex());
+      return ciphertext;
+    }
+  }
 }
+
+
+use Crypto;
+use Crypto;
+var r = new RSAKey(2048);
+
+var rsa = new RSA();
+writeln(rsa.encrypt(new CryptoBuffer("hello"), [r]));

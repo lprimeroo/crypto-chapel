@@ -69,6 +69,33 @@ module CryptoUtils {
       this.keyObj = rsaKeySupport.generateKeys(this.keyLen);
     }
 
+    proc getKeyPair() {
+      return this.keyObj;
+    }
     /* TODO: Key access functions to be added */
   }
+
+  class Envelope {
+    var keyDomain: domain(1);
+    var keys: [keyDomain] CryptoBuffer;
+    var iv: CryptoBuffer;
+    var value: CryptoBuffer;
+
+    proc Envelope(iv: CryptoBuffer, encSymmKey: [] CryptoBuffer, encSymmValue: CryptoBuffer) {
+      this.keyDomain = {0..(encSymmKey.size-1)};
+      for i in this.keyDomain do {
+        this.keys[i] = encSymmKey[i];
+      }
+      this.iv = iv;
+      this.value = encSymmValue;
+    }
+
+    proc getEncMessage() {
+      return this.value;
+    }
+
+    proc getIV() {
+      return this.iv;
+    }
+ }
 }

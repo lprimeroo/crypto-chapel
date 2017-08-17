@@ -25,8 +25,8 @@ module asymmetricPrimitives {
   extern proc EVP_PKEY_CTX_free(ctx: EVP_PKEY_CTX_PTR);
 
   extern proc EVP_SealInit(ref ctx: EVP_CIPHER_CTX, const types: EVP_CIPHER_PTR,
-                           ref ek: c_ptr(c_uchar), ekl: c_ptr(c_int),
-                           iv: c_ptr(c_uchar), ref pubk: EVP_PKEY_PTR, npubk: c_int): c_int;
+                           ek: c_ptr(c_ptr(c_uchar)), ekl: c_ptr(c_int),
+                           iv: c_ptr(c_uchar), pubk: c_ptr(EVP_PKEY_PTR), npubk: c_int): c_int;
   extern proc EVP_SealUpdate(ref ctx: EVP_CIPHER_CTX, outm: c_ptr(c_uchar),
                              outl: c_ptr(c_int), inp: c_ptr(c_uchar), inl: c_int): c_int;
   extern proc EVP_SealFinal(ref ctx: EVP_CIPHER_CTX, outm: c_ptr(c_uchar), outl: c_ptr(c_int)): c_int;
