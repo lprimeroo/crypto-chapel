@@ -133,21 +133,24 @@ module Crypto {
 
     proc encrypt(plaintext: CryptoBuffer, keys: [] RSAKey) {
       var ivLen = asymmetricPrimitives.EVP_CIPHER_iv_length(asymmetricPrimitives.EVP_aes_256_cbc());
-      var iv: [0..(ivLen - 1)] uint(8);
+      var iv: [0..((ivLen - 1): int(64))] uint(8);
 
       var encSymmKeys: [0..(keys.size - 1)] CryptoBuffer;
 
       var ciphertext = rsaSupport.rsaEncrypt(keys, plaintext, iv, encSymmKeys);
-      writeln(encSymmKeys[0].toHex());
-      return ciphertext;
+
+      var envp = new Envelope(new CryptoBuffer(iv), encSymmKeys, new CryptoBuffer(ciphertext));
+      return envp;
+    }
+
+    proc decrypt(envp: Envelope, key: RSAKey) {
+      var iv = envp.getIV().getBuffData();
+      var ciphertext = envp.getEncMessage().getBuffData();
+      var encKeys = envp.getEncKeys();
+
+      var plaintext = rsaSupport.rsaDecrypt(key, iv, ciphertext, encKeys);
+      var plaintextBuff = new CryptoBuffer(plaintext);
+      return plaintextBuff;
     }
   }
 }
-
-
-use Crypto;
-use Crypto;
-var r = new RSAKey(2048);
-
-var rsa = new RSA();
-writeln(rsa.encrypt(new CryptoBuffer("hello"), [r]));

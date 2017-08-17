@@ -10,7 +10,7 @@ module rsaSupport {
   use asymmetricPrimitives;
   use asymmetricPrimitives;
 
-  proc rsaEncrypt(keys, plaintext, ref iv: [] uint(8), ref encSymmKeys: [] CryptoBuffer) {
+  proc rsaEncrypt(keys: [] RSAKey, plaintext: CryptoBuffer, ref iv: [] uint(8), ref encSymmKeys: [] CryptoBuffer) {
 
     var ctx: asymmetricPrimitives.EVP_CIPHER_CTX;
     asymmetricPrimitives.EVP_CIPHER_CTX_init(ctx);
@@ -18,14 +18,14 @@ module rsaSupport {
     var numKeys = keys.size;
     for i in {0..(numKeys-1)} do {
       var keySize = asymmetricPrimitives.EVP_PKEY_size(keys[i+1].getKeyPair());
-      var dummyMalloc: [0..(keySize: int(64))] uint(8);
+      var dummyMalloc: [0..((keySize - 1): int(64))] uint(8);
       encSymmKeys[i] = new CryptoBuffer(dummyMalloc);
     }
 
     var encSymmKeysPtr: [0..(numKeys-1)] c_ptr(uint(8));
     var encryptedSymKeyLen: c_int = 0;
     for i in {0..(numKeys - 1)} do {
-      encSymmKeysPtr[i] = c_ptrTo(encSymmKeys[i].getBuffData());
+      encSymmKeysPtr[i] = encSymmKeys[i].getBuffPtr();
     }
 
     var keyObjs: [0..(numKeys-1)] asymmetricPrimitives.EVP_PKEY_PTR;
@@ -56,5 +56,47 @@ module rsaSupport {
 
     cipherDomain = {0..((ciphertextLen + updatedCipherLen) - 1)};
     return ciphertext;
+  }
+
+  proc rsaDecrypt(key: RSAKey, iv: [] uint(8), ciphertext: [] uint(8), encKeys: [] CryptoBuffer) {
+
+    var ctx: asymmetricPrimitives.EVP_CIPHER_CTX;
+    asymmetricPrimitives.EVP_CIPHER_CTX_init(ctx);
+
+    var numEncKeys = encKeys.size;
+    var openErrCode = 0;
+
+    for i in {0..(numEncKeys-1)} do {
+      openErrCode = asymmetricPrimitives.EVP_OpenInit(ctx,
+                                                      asymmetricPrimitives.EVP_aes_256_cbc(),
+                                                      encKeys[i].getBuffPtr(),
+                                                      encKeys[i].getBuffSize(): c_int,
+                                                      c_ptrTo(iv): c_ptr(c_uchar),
+                                                      key.getKeyPair());
+      if (openErrCode) {
+        break;
+      }
+    }
+
+    if (!openErrCode) {
+      halt("The RSAKey is an invalid match");
+    }
+
+    var plaintextLen = ciphertext.size;
+    var updatedPlainLen: c_int = 0;
+    var plaintextDomain: domain(1) = {0..(plaintextLen)};
+    var plaintext: [plaintextDomain] uint(8);
+
+    asymmetricPrimitives.EVP_OpenUpdate(ctx,
+                                        c_ptrTo(plaintext): c_ptr(c_uchar),
+                                        c_ptrTo(plaintextLen): c_ptr(c_int),
+                                        c_ptrTo(ciphertext): c_ptr(c_uchar),
+                                        ciphertext.size: c_int);
+    asymmetricPrimitives.EVP_OpenFinal(ctx,
+                                       c_ptrTo(plaintext): c_ptr(c_uchar),
+                                       c_ptrTo(updatedPlainLen): c_ptr(c_int));
+
+    plaintextDomain = {0..((plaintextLen + updatedPlainLen) - 1)};
+    return plaintext;
   }
 }

@@ -33,6 +33,11 @@ module CryptoUtils {
       return this.buff;
     }
 
+    /* Returns the pointer to the internal array within the buffer */
+    proc getBuffPtr() {
+      return c_ptrTo(this.buff);
+    }
+
     /*Returns the size/length if the internal array within the buffer */
     proc getBuffSize() {
       return this._len;
@@ -96,6 +101,14 @@ module CryptoUtils {
 
     proc getIV() {
       return this.iv;
+    }
+
+    proc getEncKeyByIndex(i: int) {
+      return this.keys[i];
+    }
+
+    proc getEncKeys() {
+      return this.keys;
     }
  }
 }
