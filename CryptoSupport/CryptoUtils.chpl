@@ -1,6 +1,6 @@
 module CryptoUtils {
   require "CryptoSupport/rsaKeySupport.chpl";
-  
+
   use rsaKeySupport;
 
   class CryptoBuffer {
@@ -11,16 +11,16 @@ module CryptoUtils {
     /* Initializes buffer to accomodate strings */
     proc CryptoBuffer(s: string) {
       this._len = s.length;
-      this.buffDomain = {0..this._len-1};
+      this.buffDomain = {1..this._len};
       for i in this.buffDomain do {
-        this.buff[i] = ascii(s[i + 1]);
+        this.buff[i] = ascii(s[i]);
       }
     }
 
     /* Initializes buffer to accomodate uint(8) arrays */
     proc CryptoBuffer(s: [] uint(8)) {
       this._len = s.size;
-      this.buffDomain = {0..this._len-1};
+      this.buffDomain = s.domain;
       for i in this.buffDomain do {
         this.buff[i] = s[i];
       }
@@ -85,7 +85,7 @@ module CryptoUtils {
     var value: CryptoBuffer;
 
     proc Envelope(iv: CryptoBuffer, encSymmKey: [] CryptoBuffer, encSymmValue: CryptoBuffer) {
-      this.keyDomain = {0..(encSymmKey.size-1)};
+      this.keyDomain = encSymmKey.domain;
       for i in this.keyDomain do {
         this.keys[i] = encSymmKey[i];
       }

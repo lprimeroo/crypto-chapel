@@ -126,7 +126,7 @@ module Crypto {
       var ivLen = asymmetricPrimitives.EVP_CIPHER_iv_length(asymmetricPrimitives.EVP_aes_256_cbc());
       var iv: [0..((ivLen - 1): int(64))] uint(8);
 
-      var encSymmKeys: [0..(keys.size - 1)] CryptoBuffer;
+      var encSymmKeys: [keys.domain] CryptoBuffer;
 
       var ciphertext = rsaSupport.rsaEncrypt(keys, plaintext, iv, encSymmKeys);
 

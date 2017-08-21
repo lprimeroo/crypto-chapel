@@ -9,7 +9,7 @@ proc main(){
   var ep = rsa.encrypt(msg, [r]);
   writeln("IV: " + ep.getIV().toHexString());
   writeln("EncMessage: " + ep.getEncMessage().toHexString());
-  writeln("EncKey: " + ep.getEncKeyByIndex(0).toHexString());
+  writeln("EncKey: " + ep.getEncKeyByIndex(1).toHexString());
   var ms = rsa.decrypt(ep, r);
   writeln("Decrypted Message: " + ms.toHexString());
 }

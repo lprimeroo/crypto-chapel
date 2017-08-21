@@ -4,7 +4,7 @@ module rsaSupport {
   require "openssl/evp.h";
   require "CryptoSupport/CryptoUtils.chpl";
   require "CryptoSupport/primitives/asymmetricPrimitives.chpl";
-  
+
   use CryptoUtils;
   use asymmetricPrimitives;
 
@@ -14,21 +14,21 @@ module rsaSupport {
     asymmetricPrimitives.EVP_CIPHER_CTX_init(ctx);
 
     var numKeys = keys.size;
-    for i in {0..(numKeys-1)} do {
-      var keySize = asymmetricPrimitives.EVP_PKEY_size(keys[i+1].getKeyPair());
-      var dummyMalloc: [0..((keySize - 1): int(64))] uint(8);
+    for i in keys.domain do {
+      var keySize = asymmetricPrimitives.EVP_PKEY_size(keys[i].getKeyPair());
+      var dummyMalloc: [1..((keySize): int(64))] uint(8);
       encSymmKeys[i] = new CryptoBuffer(dummyMalloc);
     }
 
-    var encSymmKeysPtr: [0..(numKeys-1)] c_ptr(uint(8));
+    var encSymmKeysPtr: [keys.domain] c_ptr(uint(8));
     var encryptedSymKeyLen: c_int = 0;
-    for i in {0..(numKeys - 1)} do {
+    for i in keys.domain do {
       encSymmKeysPtr[i] = encSymmKeys[i].getBuffPtr();
     }
 
-    var keyObjs: [0..(numKeys-1)] asymmetricPrimitives.EVP_PKEY_PTR;
-    for i in {0..(numKeys - 1)} do {
-      keyObjs[i] = keys[i+1].getKeyPair();
+    var keyObjs: [keys.domain] asymmetricPrimitives.EVP_PKEY_PTR;
+    for i in keys.domain do {
+      keyObjs[i] = keys[i].getKeyPair();
     }
 
     var plaintextBuff = plaintext.getBuffData();
@@ -64,7 +64,7 @@ module rsaSupport {
     var numEncKeys = encKeys.size;
     var openErrCode = 0;
 
-    for i in {0..(numEncKeys-1)} do {
+    for i in encKeys.domain do {
       openErrCode = asymmetricPrimitives.EVP_OpenInit(ctx,
                                                       asymmetricPrimitives.EVP_aes_256_cbc(),
                                                       encKeys[i].getBuffPtr(),
