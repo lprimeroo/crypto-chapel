@@ -1,10 +1,8 @@
-require "openssl/rand.h";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/primitives/utilPrimitives.chpl";
-
 module cryptoRandomSupport {
+  require "openssl/rand.h";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/primitives/utilPrimitives.chpl";
 
-  use utilPrimitives;
   use utilPrimitives;
 
   proc createRandomBuffer(buffLen: int) {

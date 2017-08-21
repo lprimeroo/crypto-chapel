@@ -1,6 +1,5 @@
 proc main(){
   use Crypto;
-  use Crypto;
 
   /* String to buffer */
   var b = new CryptoBuffer("foobar");

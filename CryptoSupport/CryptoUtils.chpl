@@ -1,8 +1,6 @@
-require "CryptoSupport/rsaKeySupport.chpl";
-
 module CryptoUtils {
-
-  use rsaKeySupport;
+  require "CryptoSupport/rsaKeySupport.chpl";
+  
   use rsaKeySupport;
 
   class CryptoBuffer {

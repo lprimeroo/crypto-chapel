@@ -1,6 +1,6 @@
 proc main(){
   use Crypto;
-  use Crypto;
+
   var r = new RSAKey(1024);
 
   var rsa = new RSA();

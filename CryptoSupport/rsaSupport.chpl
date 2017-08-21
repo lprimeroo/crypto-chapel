@@ -1,13 +1,11 @@
-require "CryptoSupport/handlers/rsa_complex_bypass_handler.h";
-require "openssl/pem.h", "openssl/bn.h", "openssl/bio.h";
-require "openssl/evp.h";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/primitives/asymmetricPrimitives.chpl";
-
 module rsaSupport {
+  require "CryptoSupport/handlers/rsa_complex_bypass_handler.h";
+  require "openssl/pem.h", "openssl/bn.h", "openssl/bio.h";
+  require "openssl/evp.h";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/primitives/asymmetricPrimitives.chpl";
+  
   use CryptoUtils;
-  use CryptoUtils;
-  use asymmetricPrimitives;
   use asymmetricPrimitives;
 
   proc rsaEncrypt(keys: [] RSAKey, plaintext: CryptoBuffer, ref iv: [] uint(8), ref encSymmKeys: [] CryptoBuffer) {

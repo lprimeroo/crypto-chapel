@@ -1,30 +1,21 @@
-require "openssl/evp.h", "-lcrypto";
-require "openssl/aes.h", "openssl/rand.h";
-
-require "CryptoSupport/hashSupport.chpl";
-require "CryptoSupport/aesSupport.chpl";
-require "CryptoSupport/kdfSupport.chpl";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/cryptoRandomSupport.chpl";
-require "CryptoSupport/rsaSupport.chpl";
-
 module Crypto {
+  require "openssl/evp.h", "-lcrypto";
+  require "openssl/aes.h", "openssl/rand.h";
+
+  require "CryptoSupport/hashSupport.chpl";
+  require "CryptoSupport/aesSupport.chpl";
+  require "CryptoSupport/kdfSupport.chpl";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/cryptoRandomSupport.chpl";
+  require "CryptoSupport/rsaSupport.chpl";
 
   use kdfSupport;
-  use kdfSupport;
-  use aesSupport;
   use aesSupport;
   use hashSupport;
-  use hashSupport;
-  use CryptoUtils;
   use CryptoUtils;
   use cryptoRandomSupport;
-  use cryptoRandomSupport;
-  use symmetricPrimitives;
   use symmetricPrimitives;
   use asymmetricPrimitives;
-  use asymmetricPrimitives;
-  use rsaSupport;
   use rsaSupport;
 
   /* Hashing Functions */
@@ -66,7 +57,7 @@ module Crypto {
 
   /* AES Symmetric cipher */
   class AES {
-    var cipher: symmetricPrimitives.EVP_CIPHER_PTR;
+    const cipher: symmetricPrimitives.EVP_CIPHER_PTR;
     var bitLen: int;
 
     proc AES(bits: int, mode: string) {
