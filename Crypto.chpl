@@ -95,6 +95,9 @@ module Crypto {
 
   class CryptoRandom {
     proc createRandomBuffer(buffLen: int) {
+      if (buffLen < 1) {
+        halt("Invalid random buffer length specified.");
+      }
       var randomizedBuff = cryptoRandomSupport.createRandomBuffer(buffLen);
       var randomizedCryptoBuff = new CryptoBuffer(randomizedBuff);
       return randomizedCryptoBuff;
@@ -107,6 +110,9 @@ module Crypto {
     var hashName: string;
 
     proc KDF(bitLen: int, iterCount: int, digest: Hash) {
+      if (bitLen < 1) {
+        halt("Invalid key size.");
+      }
       this.bitLen = bitLen;
       this.iterCount = iterCount;
       this.hashName = digest.getDigestName();
