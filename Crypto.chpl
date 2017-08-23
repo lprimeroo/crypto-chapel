@@ -1,29 +1,22 @@
-require "openssl/evp.h", "-lcrypto";
-require "openssl/aes.h", "openssl/rand.h";
-
-require "CryptoSupport/hashSupport.chpl";
-require "CryptoSupport/aesSupport.chpl";
-require "CryptoSupport/kdfSupport.chpl";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/cryptoRandomSupport.chpl";
-
-
 module Crypto {
+  require "openssl/evp.h", "-lcrypto";
+  require "openssl/aes.h", "openssl/rand.h";
+
+  require "CryptoSupport/hashSupport.chpl";
+  require "CryptoSupport/aesSupport.chpl";
+  require "CryptoSupport/kdfSupport.chpl";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/cryptoRandomSupport.chpl";
+  require "CryptoSupport/rsaSupport.chpl";
 
   use kdfSupport;
-  use kdfSupport;
-  use aesSupport;
   use aesSupport;
   use hashSupport;
-  use hashSupport;
-  use CryptoUtils;
   use CryptoUtils;
   use cryptoRandomSupport;
-  use cryptoRandomSupport;
-  use symmetricPrimitives;
   use symmetricPrimitives;
   use asymmetricPrimitives;
-  use asymmetricPrimitives;
+  use rsaSupport;
 
   /* Hashing Functions */
   class Hash {
@@ -64,7 +57,7 @@ module Crypto {
 
   /* AES Symmetric cipher */
   class AES {
-    var cipher: symmetricPrimitives.EVP_CIPHER_PTR;
+    const cipher: symmetricPrimitives.EVP_CIPHER_PTR;
     var bitLen: int;
 
     proc AES(bits: int, mode: string) {
@@ -123,6 +116,32 @@ module Crypto {
       var key = kdfSupport.PBKDF2_HMAC(userKey, saltBuff, this.bitLen, this.iterCount, this.hashName);
       var keyBuff = new CryptoBuffer(key);
       return keyBuff;
+    }
+  }
+
+  class RSA {
+    proc RSA() {}
+
+    proc encrypt(plaintext: CryptoBuffer, keys: [] RSAKey) {
+      var ivLen = asymmetricPrimitives.EVP_CIPHER_iv_length(asymmetricPrimitives.EVP_aes_256_cbc());
+      var iv: [0..((ivLen - 1): int(64))] uint(8);
+
+      var encSymmKeys: [keys.domain] CryptoBuffer;
+
+      var ciphertext = rsaSupport.rsaEncrypt(keys, plaintext, iv, encSymmKeys);
+
+      var envp = new Envelope(new CryptoBuffer(iv), encSymmKeys, new CryptoBuffer(ciphertext));
+      return envp;
+    }
+
+    proc decrypt(envp: Envelope, key: RSAKey) {
+      var iv = envp.getIV().getBuffData();
+      var ciphertext = envp.getEncMessage().getBuffData();
+      var encKeys = envp.getEncKeys();
+
+      var plaintext = rsaSupport.rsaDecrypt(key, iv, ciphertext, encKeys);
+      var plaintextBuff = new CryptoBuffer(plaintext);
+      return plaintextBuff;
     }
   }
 }

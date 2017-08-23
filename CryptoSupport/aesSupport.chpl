@@ -1,15 +1,12 @@
-require "openssl/evp.h";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/primitives/symmetricPrimitives.chpl";
-
 module aesSupport {
+  require "openssl/evp.h";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/primitives/symmetricPrimitives.chpl";
 
   use CryptoUtils;
-  use CryptoUtils;
-  use symmetricPrimitives;
   use symmetricPrimitives;
 
-  proc aesEncrypt(plaintext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer, cipher: symmetricPrimitives.EVP_CIPHER_PTR) {
+  proc aesEncrypt(plaintext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer, const cipher: symmetricPrimitives.EVP_CIPHER_PTR) {
 
     /* Initialize the context */
     var ctx: symmetricPrimitives.EVP_CIPHER_CTX;

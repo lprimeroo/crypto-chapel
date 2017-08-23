@@ -1,6 +1,5 @@
 proc main(){
   use Crypto;
-  use Crypto;
 
   var SHA = new Hash("SHA1");
   var SHA2 = new Hash("SHA256");

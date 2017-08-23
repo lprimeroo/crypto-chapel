@@ -1,12 +1,9 @@
-require "openssl/evp.h";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/primitives/hashPrimitives.chpl";
-
 module hashSupport {
+  require "openssl/evp.h";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/primitives/hashPrimitives.chpl";
 
   use CryptoUtils;
-  use CryptoUtils;
-  use hashPrimitives;
   use hashPrimitives;
 
   /* Routine to handle OpenSSL primitives for creating digests */

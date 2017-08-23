@@ -1,12 +1,9 @@
-require "openssl/evp.h";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/primitives/utilPrimitives.chpl";
-
 module kdfSupport {
+  require "openssl/evp.h";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/primitives/utilPrimitives.chpl";
 
   use CryptoUtils;
-  use CryptoUtils;
-  use utilPrimitives;
   use utilPrimitives;
 
   /* Routine for PBKDF2 mechanism */

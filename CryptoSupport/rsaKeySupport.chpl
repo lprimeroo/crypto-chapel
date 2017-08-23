@@ -1,13 +1,10 @@
-require "CryptoSupport/handlers/rsa_complex_bypass_handler.h";
-require "openssl/evp.h";
-require "CryptoSupport/CryptoUtils.chpl";
-require "CryptoSupport/primitives/asymmetricPrimitives.chpl";
-
 module rsaKeySupport {
-
+  require "CryptoSupport/handlers/rsa_complex_bypass_handler.h";
+  require "openssl/evp.h";
+  require "CryptoSupport/CryptoUtils.chpl";
+  require "CryptoSupport/primitives/asymmetricPrimitives.chpl";
+  
   use CryptoUtils;
-  use CryptoUtils;
-  use asymmetricPrimitives;
   use asymmetricPrimitives;
 
   proc generateKeys(bits: int) {

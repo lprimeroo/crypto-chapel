@@ -1,6 +1,5 @@
 proc main(){
   use Crypto;
-  use Crypto;
 
   /* Create AES instance with the version required */
   var a = new AES(256, "cbc");
