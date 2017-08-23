@@ -9,7 +9,7 @@ proc main(){
   writeln(b.getBuffSize());
 
   /* Array to buffer */
-  var arr: [0..4] uint(8) = [1, 2, 3, 4, 5];
+  var arr: [0..4] uint(8) = [1: uint(8), 2: uint(8), 3: uint(8), 4: uint(8), 5: uint(8)];
   var c = new CryptoBuffer(arr);
   writeln(c.toHex());
   writeln(c.toHexString());
