@@ -6,6 +6,7 @@ module aesSupport {
   use CryptoUtils;
   use symmetricPrimitives;
 
+  pragma "no doc"
   proc aesEncrypt(plaintext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer, const cipher: symmetricPrimitives.EVP_CIPHER_PTR) {
 
     /* Initialize the context */
@@ -42,6 +43,7 @@ module aesSupport {
     return ciphertext;
   }
 
+  pragma "no doc"
   proc aesDecrypt(ciphertext: CryptoBuffer, key: CryptoBuffer, IV: CryptoBuffer, cipher: symmetricPrimitives.EVP_CIPHER_PTR) {
 
     /* Initialize the context */

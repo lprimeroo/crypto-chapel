@@ -6,7 +6,7 @@ module hashSupport {
   use CryptoUtils;
   use hashPrimitives;
 
-  /* Routine to handle OpenSSL primitives for creating digests */
+  pragma "no doc"
   proc digestPrimitives(digestName: string, hashLen: int, inputBuffer: CryptoBuffer) {
 
     /* Loads the digest primitives into the table  */

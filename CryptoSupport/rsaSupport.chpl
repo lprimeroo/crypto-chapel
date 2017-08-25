@@ -8,6 +8,7 @@ module rsaSupport {
   use CryptoUtils;
   use asymmetricPrimitives;
 
+  pragma "no doc"
   proc rsaEncrypt(keys: [] RSAKey, plaintext: CryptoBuffer, ref iv: [] uint(8), ref encSymmKeys: [] CryptoBuffer) {
 
     var ctx: asymmetricPrimitives.EVP_CIPHER_CTX;
@@ -56,6 +57,7 @@ module rsaSupport {
     return ciphertext;
   }
 
+  pragma "no doc"
   proc rsaDecrypt(key: RSAKey, iv: [] uint(8), ciphertext: [] uint(8), encKeys: [] CryptoBuffer) {
 
     var ctx: asymmetricPrimitives.EVP_CIPHER_CTX;

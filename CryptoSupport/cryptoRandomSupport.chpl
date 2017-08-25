@@ -5,6 +5,7 @@ module cryptoRandomSupport {
 
   use utilPrimitives;
 
+  pragma "no doc"
   proc createRandomBuffer(buffLen: int) {
     var buff: [0..(buffLen - 1)] uint(8);
     var retErrCode: c_int;

@@ -8,7 +8,15 @@ module CryptoUtils {
     var buffDomain: domain(1);
     var buff: [buffDomain] uint(8);
 
-    /* Initializes buffer to accomodate strings */
+    /* The `CryptoBuffer` class constructor that initializes the buffer
+       when a `string` is supplied to it.
+
+       :arg s: `string` input for buffer conversion.
+       :type s: `string`
+
+       :return: An object of class `CryptoBuffer`.
+       :rtype: `CryptoBuffer`
+    */
     proc CryptoBuffer(s: string) {
       this._len = s.length;
       this.buffDomain = {1..this._len};
@@ -17,7 +25,15 @@ module CryptoUtils {
       }
     }
 
-    /* Initializes buffer to accomodate uint(8) arrays */
+    /* The `CryptoBuffer` class constructor that initializes the buffer
+       when a `[] uint(8)` is supplied to it.
+
+       :arg s: `[] uint(8)` input for buffer conversion.
+       :type s: `[] uint(8)]`
+
+       :return: An object of class `CryptoBuffer`.
+       :rtype: `CryptoBuffer`
+    */
     proc CryptoBuffer(s: [] uint(8)) {
       this._len = s.size;
       this.buffDomain = s.domain;
@@ -26,22 +42,40 @@ module CryptoUtils {
       }
     }
 
-    /* Returns the internal array within the buffer */
+    /* Returns the entire internal buffer with each byte in ASCII.
+
+       :return: the internal buffer representation.
+       :rtype: `[] uint(8)`
+    */
     proc getBuffData() {
       return this.buff;
     }
 
-    /* Returns the pointer to the internal array within the buffer */
+    /* Returns the pointer to the entire internal buffer with
+       each byte in ASCII.
+
+       :return: pointer to the internal buffer representation.
+       :rtype: `c_ptr([] uint(8))`
+    */
     proc getBuffPtr() {
       return c_ptrTo(this.buff);
     }
 
-    /*Returns the size/length if the internal array within the buffer */
-    proc getBuffSize() {
+    /* Returns the length of the entire internal buffer.
+
+       :return: length of the internal buffer represenation.
+       :rtype: `int`
+    */
+    proc getBuffSize(): int {
       return this._len;
     }
 
-    /* Returns hexadecimal array representation of the buffer */
+    /* Returns the hexadecimal array representation of the entire internal
+        buffer.
+
+       :return: hex array representation of the internal buffer.
+       :rtype: `[] string`
+    */
     proc toHex() {
       var buffHex: [this.buffDomain] string;
       for i in this.buffDomain do {
@@ -50,7 +84,12 @@ module CryptoUtils {
       return buffHex;
     }
 
-    /* Returns hexadecimal string representation of the buffer */
+    /* Returns the hexadecimal string representation of the entire internal
+        buffer.
+
+       :return: hex string representation of the internal buffer.
+       :rtype: `string`
+    */
     proc toHexString() {
       var buffHexString: string;
       for i in this.buffDomain do {
@@ -64,6 +103,18 @@ module CryptoUtils {
     var keyLen: int;
     var keyObj: asymmetricPrimitives.EVP_PKEY_PTR;
 
+    /* The `RSAKey` class constructor that initializes the `EVP_PKEY` object
+        of OpenSSL and basically, initializes a set of public and private keys.
+
+       It checks for valid RSA key lengths and generates a public key and private
+       key pair accordingly.
+
+       :arg keyLen: RSA Key length in bits.
+       :type keyLen: `int`
+
+       :return: An object of class `RSAKey` representing the key pair.
+       :rtype: `RSAKey`
+    */
     proc RSAKey(keyLen: int) {
       if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
         halt("RSAKey: Invalid key length.");
@@ -72,10 +123,12 @@ module CryptoUtils {
       this.keyObj = rsaKeySupport.generateKeys(this.keyLen);
     }
 
+    pragma "no doc"
     proc getKeyPair() {
       return this.keyObj;
     }
-    /* TODO: Key access functions to be added */
+
+    // TODO: Key access functions to be added
   }
 
   class Envelope {
@@ -84,6 +137,21 @@ module CryptoUtils {
     var iv: CryptoBuffer;
     var value: CryptoBuffer;
 
+    /* The `Envelope` class constructor that encapsulates the IV, AES encrypted
+       ciphertext buffer and an array of encrypted key buffers.
+
+       :arg iv: Initialization Vector.
+       :type iv: `CryptoBuffer`
+
+       :arg encSymmKey: Array of encrypted symmetric (AES) keys.
+       :type encSymmKey: `[] CryptoBuffer`
+
+       :arg encSymmValue: AES-encrypted ciphertext buffer.
+       :type encSymmValue: `CryptoBuffer`
+
+       :return: An object of class `Envelope`.
+       :rtype: `Envelope`
+    */
     proc Envelope(iv: CryptoBuffer, encSymmKey: [] CryptoBuffer, encSymmValue: CryptoBuffer) {
       this.keyDomain = encSymmKey.domain;
       for i in this.keyDomain do {
@@ -93,18 +161,49 @@ module CryptoUtils {
       this.value = encSymmValue;
     }
 
+    /* This function returns the encrypted version of the plaintext
+       supplied by the user.
+
+       :return: A 'CryptoBuffer' representing the ciphertext.
+       :rtype: `CryptoBuffer`
+    */
     proc getEncMessage() {
       return this.value;
     }
 
+    /* This function returns the IV generated by the `encrypt` routine and
+        encapsulated in the `Envelope`. This is used for both encryption and
+        decryption.
+
+       :return: Initialization Vector.
+       :rtype: `CryptoBuffer`
+    */
     proc getIV() {
       return this.iv;
     }
 
+    /* This function returns a particular symmetric key buffer based
+       on the index supplied as the argument.
+
+       .. note::
+
+         The supplied index should be in the domain of the `this.keys` array.
+
+       :arg i: An index of the symmetric key buffer array.
+       :type i: `int`
+
+       :return: A specific key buffer based on the index.
+       :rtype: `CryptoBuffer`
+    */
     proc getEncKeyByIndex(i: int) {
       return this.keys[i];
     }
 
+    /* This function returns the entire array of symmetric key buffers.
+
+       :return: Entire array of key buffers.
+       :rtype: `[] CryptoBuffer`
+    */
     proc getEncKeys() {
       return this.keys;
     }
