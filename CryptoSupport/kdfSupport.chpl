@@ -6,7 +6,7 @@ module kdfSupport {
   use CryptoUtils;
   use utilPrimitives;
 
-  /* Routine for PBKDF2 mechanism */
+  pragma "no doc"
   proc PBKDF2_HMAC(userKey: string, saltBuff: CryptoBuffer, bitLen: int, iterCount: int, digestName: string) {
 
     /* Loads all digests into the table*/

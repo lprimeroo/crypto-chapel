@@ -3,10 +3,11 @@ module rsaKeySupport {
   require "openssl/evp.h";
   require "CryptoSupport/CryptoUtils.chpl";
   require "CryptoSupport/primitives/asymmetricPrimitives.chpl";
-  
+
   use CryptoUtils;
   use asymmetricPrimitives;
 
+  pragma "no doc"
   proc generateKeys(bits: int) {
    var localKeyPair: asymmetricPrimitives.EVP_PKEY_PTR;
    var keyCtx = asymmetricPrimitives.EVP_PKEY_CTX_new_id(asymmetricPrimitives.EVP_PKEY_RSA: c_int,
